@@ -6,12 +6,13 @@ const Reservation = require("./reservation");
 /** Customer of the restaurant. */
 
 class Customer {
-  constructor({ id, firstName, lastName, phone, notes }) {
+  constructor({ id, firstName, lastName, phone, notes, numRes }) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.phone = phone;
     this.notes = notes;
+    this.numRes = numRes;
   }
 
   /** find all customers. */
@@ -77,6 +78,60 @@ class Customer {
         [this.firstName, this.lastName, this.phone, this.notes, this.id]
       );
     }
+  }
+
+  /** returns customers first and last name. */
+
+  fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  /** search for customer/s by name. */
+
+  static async search(name) {
+    const names = name.split(" ").map(n => '%' + n + '%');
+    const result = await db.query(
+      `SELECT id, 
+        first_name AS "firstName",  
+        last_name AS "lastName", 
+        phone, 
+        notes 
+      FROM customers WHERE
+        first_name ILIKE ANY ($1)
+        OR last_name ILIKE ANY ($1)`, [names]);
+    if(result.rowCount === 0) {
+      const err = new Error(`Could not find customers matching ${name}`);
+      err.status = 400;
+      throw err;
+    }
+    return result.rows.map(c => new Customer(c));
+  }
+
+  /** find top 10 customers with most reservations */
+
+  static async bestCustomers() {
+    console.log("IN BEST CUSTOMERS BEG******");
+    const result = await db.query(
+      `SELECT c.id AS "id",
+        c.first_name AS "firstName",
+        c.last_name AS "lastName",
+        c.phone AS "phone",
+        c.notes AS "notes",
+        COUNT(r.customer_id) AS numRes
+      FROM reservations AS r
+        RIGHT JOIN customers AS c
+          ON r.customer_id = c.id
+      GROUP BY c.id
+        ORDER BY numRes DESC
+        LIMIT 10`
+    );
+    console.log("IN CUSTOMER CLASS*****", result.rows);
+    return result.rows[0];
+
+    // const customers = result.rows.map(c => new Customer(c));
+    // console.log(result.rows);
+    // return customers;
+    // return result.rows.map(c => new Customer(c));
   }
 }
 

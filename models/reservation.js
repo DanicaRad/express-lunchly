@@ -1,6 +1,7 @@
 /** Reservation for Lunchly */
 
 const moment = require("moment");
+const Customer = require("./customer");
 
 const db = require("../db");
 
@@ -37,6 +38,33 @@ class Reservation {
     );
 
     return results.rows.map(row => new Reservation(row));
+  }
+
+  async save() {
+    if(this.numGuests <= 0) {
+      const err = new Error(`1 or more guests required to make reservation.`);
+      err.status = 400;
+      throw err;
+    }
+    if (this.id === undefined) {
+      const result = await db.query(
+        `INSERT INTO reservations (customer_id, start_at, num_guests, notes)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id, start_at AS "startAt", notes`,
+        [this.customerId, this.startAt, this.numGuests, this.notes]
+      );
+
+      this.id = result.rows[0].id;
+      this.startAt = result.rows[0].startAt;
+      this.notes = result.rows[0].notes;
+      
+    } else {
+      await db.query(
+        `UPDATE reservations SET start_at=$1, num_guests=$2, notes=$3
+             WHERE id=$5`,
+        [this.startAt, this.numGuests, this.notes, this.id]
+      );
+    }
   }
 }
 

@@ -1,5 +1,8 @@
 /** Express app for Lunchly. */
 
+/** nodemon -e js,html,css */
+
+
 const express = require("express");
 const nunjucks = require("nunjucks");
 const bodyParser = require("body-parser");
@@ -30,6 +33,7 @@ app.use(function(req, res, next) {
 /** general error handler */
 
 app.use((err, req, res, next) => {
+  console.log("ERROR IN APP FUNCTION *******", err);
   res.status(err.status || 500);
 
   return res.render("error.html", { err });

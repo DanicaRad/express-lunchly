@@ -32,7 +32,15 @@
         <li class="nav-item">
           <a class="nav-link" href="/add/">Add a Customer</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/top/">Best Customers</a>
+        </li>
       </ul>
+      <form class="d-flex" action="/search" method="GET">
+        <label for="name"></label>
+        <input class="form-control me-2" id="name" name="name" type="text" placeholder="Customer Name" aria-label="Name">
+        <button class="btn btn-primary">Search</button>
+      </form>
     </div>
   </nav>
 

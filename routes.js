@@ -60,6 +60,18 @@ router.get("/:id/", async function(req, res, next) {
   }
 });
 
+/** Search: search for customer by name. */
+
+router.get("/search", async function(req, res, next) {
+  try {
+    const name = req.query.name;
+    const customers = await Customer.search(name);
+    return res.render("customer_list.html", { customers });
+  } catch(err) {
+    return next(err);
+  }
+});
+
 /** Show form to edit a customer. */
 
 router.get("/:id/edit/", async function(req, res, next) {
@@ -85,6 +97,19 @@ router.post("/:id/edit/", async function(req, res, next) {
 
     return res.redirect(`/${customer.id}/`);
   } catch (err) {
+    return next(err);
+  }
+});
+
+/** Show top 10 customers by most reservations. */
+
+router.get("/top/", async function(req, res, next) {
+  try {
+    const customers = await Customer.bestCustomers();
+    console.log("CUSTOMER IN BEST CUSTOMERS ROUTES ********", customers);
+    return res.render("best_customers.html", { customers });
+  } catch(err) {
+    console.log("ERROR*******", err);
     return next(err);
   }
 });
