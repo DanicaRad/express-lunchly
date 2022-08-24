@@ -1,8 +1,5 @@
 /** Express app for Lunchly. */
 
-/** nodemon -e js,html,css */
-
-
 const express = require("express");
 const nunjucks = require("nunjucks");
 const bodyParser = require("body-parser");

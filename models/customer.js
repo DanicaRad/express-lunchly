@@ -6,13 +6,13 @@ const Reservation = require("./reservation");
 /** Customer of the restaurant. */
 
 class Customer {
-  constructor({ id, firstName, lastName, phone, notes, numRes }) {
+  constructor({ id, firstName, lastName, phone, notes, numres }) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.phone = phone;
     this.notes = notes;
-    this.numRes = numRes;
+    this.numRes = numres;
   }
 
   /** find all customers. */
@@ -125,12 +125,12 @@ class Customer {
         ORDER BY numRes DESC
         LIMIT 10`
     );
-    console.log("IN CUSTOMER CLASS*****", result.rows);
-    return result.rows[0];
 
-    // const customers = result.rows.map(c => new Customer(c));
+    const customers = result.rows.map(c => new Customer(c));
+    console.log("RESULT.ROWS *****", result.rows)
+    console.log("IN CUSTOMER CLASS*****", customers);
     // console.log(result.rows);
-    // return customers;
+    return customers;
     // return result.rows.map(c => new Customer(c));
   }
 }

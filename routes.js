@@ -11,9 +11,19 @@ const router = new express.Router();
 
 router.get("/", async function(req, res, next) {
   try {
+    Customer.bestCustomers();
     const customers = await Customer.all();
     return res.render("customer_list.html", { customers });
   } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/top", async function(req, res, next) {
+  try {
+    const customers = await Customer.bestCustomers();
+    return res.render("best_customers.html", { customers });
+  } catch(err) {
     return next(err);
   }
 });
@@ -103,16 +113,7 @@ router.post("/:id/edit/", async function(req, res, next) {
 
 /** Show top 10 customers by most reservations. */
 
-router.get("/top/", async function(req, res, next) {
-  try {
-    const customers = await Customer.bestCustomers();
-    console.log("CUSTOMER IN BEST CUSTOMERS ROUTES ********", customers);
-    return res.render("best_customers.html", { customers });
-  } catch(err) {
-    console.log("ERROR*******", err);
-    return next(err);
-  }
-});
+
 
 /** Handle adding a new reservation. */
 
