@@ -1,5 +1,7 @@
 /** Routes for Lunchly */
 
+/** nodemon -e js,html,css */
+
 const express = require("express");
 
 const Customer = require("./models/customer");
@@ -11,7 +13,6 @@ const router = new express.Router();
 
 router.get("/", async function(req, res, next) {
   try {
-    Customer.bestCustomers();
     const customers = await Customer.all();
     return res.render("customer_list.html", { customers });
   } catch (err) {
@@ -19,7 +20,9 @@ router.get("/", async function(req, res, next) {
   }
 });
 
-router.get("/top", async function(req, res, next) {
+/** Show top 10 customers by most reservations. */
+
+router.get("/best-customers", async function(req, res, next) {
   try {
     const customers = await Customer.bestCustomers();
     return res.render("best_customers.html", { customers });
@@ -56,6 +59,18 @@ router.post("/add/", async function(req, res, next) {
   }
 });
 
+/** Search: search for customer by name. */
+
+router.get("/search", async function(req, res, next) {
+  try {
+    const name = req.query.name;
+    const customers = await Customer.search(name);
+    return res.render("customer_list.html", { customers });
+  } catch(err) {
+    return next(err);
+  }
+});
+
 /** Show a customer, given their ID. */
 
 router.get("/:id/", async function(req, res, next) {
@@ -70,17 +85,6 @@ router.get("/:id/", async function(req, res, next) {
   }
 });
 
-/** Search: search for customer by name. */
-
-router.get("/search", async function(req, res, next) {
-  try {
-    const name = req.query.name;
-    const customers = await Customer.search(name);
-    return res.render("customer_list.html", { customers });
-  } catch(err) {
-    return next(err);
-  }
-});
 
 /** Show form to edit a customer. */
 
@@ -110,10 +114,6 @@ router.post("/:id/edit/", async function(req, res, next) {
     return next(err);
   }
 });
-
-/** Show top 10 customers by most reservations. */
-
-
 
 /** Handle adding a new reservation. */
 

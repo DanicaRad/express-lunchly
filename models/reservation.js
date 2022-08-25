@@ -1,9 +1,11 @@
 /** Reservation for Lunchly */
 
 const moment = require("moment");
+const dayjs = require('dayjs');
 const Customer = require("./customer");
 
 const db = require("../db");
+const { weekdays } = require("moment");
 
 
 /** A reservation for a party */
@@ -11,13 +13,39 @@ const db = require("../db");
 class Reservation {
   constructor({id, customerId, numGuests, startAt, notes}) {
     this.id = id;
-    this.customerId = customerId;
+    this._customerId = customerId;
     this.numGuests = numGuests;
     this.startAt = startAt;
     this.notes = notes;
   }
 
+  /** get/set for customerID */
+  get customerId() {
+    return this._customerId;
+  }
+
+  set customerId(id) {
+    if(id !== this._customerId) {
+      const err = new Error(`Cannot reassign value of customerId.`);
+      err.status = 400;
+      throw err;
+    }
+    this._customerId = id;
+  }
+
   /** formatter for startAt */
+  get startAt() {
+    return this._startAt;
+  }
+
+  set startAt(date) {
+    if(!moment.isDate(date)) {
+      const err = new Error(`Reservation start is not a valid date. Must be formated as YYYY-MM-DD hh:mm am/pm like 2022-08-27 6:00 pm.`);
+      err.status = 400;
+      throw err;
+    }
+    this._startAt = date;
+  }
 
   getformattedStartAt() {
     return moment(this.startAt).format('MMMM Do YYYY, h:mm a');
@@ -57,7 +85,7 @@ class Reservation {
       this.id = result.rows[0].id;
       this.startAt = result.rows[0].startAt;
       this.notes = result.rows[0].notes;
-      
+
     } else {
       await db.query(
         `UPDATE reservations SET start_at=$1, num_guests=$2, notes=$3

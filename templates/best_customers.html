@@ -8,7 +8,7 @@
 
 <ol style="column-count: 1">
   {% for customer in customers %}
-    <li><a href="/{{ customer.id }}">{{ customer.fullName() }}</a></li>
+    <li><a href="/{{ customer.id }}">{{ customer.fullName }}</a></li>
     <div>Reservations: {{ customer.numRes }}</div>
   {% endfor %}
 </ol>

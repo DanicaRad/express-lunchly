@@ -30,7 +30,6 @@ app.use(function(req, res, next) {
 /** general error handler */
 
 app.use((err, req, res, next) => {
-  console.log("ERROR IN APP FUNCTION *******", err);
   res.status(err.status || 500);
 
   return res.render("error.html", { err });

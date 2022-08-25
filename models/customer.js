@@ -15,6 +15,22 @@ class Customer {
     this.numRes = numres;
   }
 
+  get notes() {
+    return this._notes;
+  }
+
+  set notes(notes) {
+    if(!notes) {
+      this._notes = "";
+    }
+    this._notes = notes;
+  }
+
+  get fullName() {
+    return this.firstName + " " + this.lastName;
+  }
+
+
   /** find all customers. */
 
   static async all() {
@@ -80,12 +96,6 @@ class Customer {
     }
   }
 
-  /** returns customers first and last name. */
-
-  fullName() {
-    return `${this.firstName} ${this.lastName}`;
-  }
-
   /** search for customer/s by name. */
 
   static async search(name) {
@@ -110,7 +120,6 @@ class Customer {
   /** find top 10 customers with most reservations */
 
   static async bestCustomers() {
-    console.log("IN BEST CUSTOMERS BEG******");
     const result = await db.query(
       `SELECT c.id AS "id",
         c.first_name AS "firstName",
@@ -126,12 +135,7 @@ class Customer {
         LIMIT 10`
     );
 
-    const customers = result.rows.map(c => new Customer(c));
-    console.log("RESULT.ROWS *****", result.rows)
-    console.log("IN CUSTOMER CLASS*****", customers);
-    // console.log(result.rows);
-    return customers;
-    // return result.rows.map(c => new Customer(c));
+    return result.rows.map(c => new Customer(c));
   }
 }
 
